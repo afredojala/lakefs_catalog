@@ -1,0 +1,4 @@
+api_spec/out
+__pycache__
+.venv
+.env

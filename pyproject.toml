@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "lakefs-catalog"
+version = "0.1.0"
+description = ""
+authors = ["Andreas Fred-Ojala <Andreasfo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyiceberg = {git = "https://github.com/apache/iceberg-python"}
+pyarrow = "^15.0.0"
+lakefs-api = {path = "api_spec/out/python"}
+s3fs = ">=2023.1.0,<2024.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
