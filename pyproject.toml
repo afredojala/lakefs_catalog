@@ -13,6 +13,17 @@ lakefs-api = {path = "api_spec/out/python"}
 s3fs = ">=2023.1.0,<2024.1.0"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

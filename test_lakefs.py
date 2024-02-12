@@ -1,41 +1,8 @@
 from pyiceberg.types import NestedField, StringType, DoubleType
-from pyiceberg.catalog import load_catalog
 import pyarrow as pa
-from pyiceberg.transforms import IdentityTransform
-from pyiceberg.table.sorting import SortOrder, SortField
-from pyiceberg.transforms import DayTransform
-from pyiceberg.partitioning import PartitionSpec, PartitionField
-from pyiceberg.types import (
-    TimestampType,
-    FloatType,
-    DoubleType,
-    StringType,
-    NestedField,
-    StructType,
-)
 from pyiceberg.schema import Schema
 import os
 from lakefs_catalog import LakeFSCatalog
-# import lakefs_api
-# from lakefs_api.rest import ApiException
-
-# configuration = lakefs_api.Configuration(
-#     username=os.getenv("LAKEFS_KEY"),
-#     password=os.getenv("LAKEFS_SECRET"),
-#     host='http://localhost:8000/api/v1'
-# )
-#
-# with lakefs_api.ApiClient(configuration) as api_client:
-#     # Create an instance of the API class
-#     repository = 'afo'  # str |
-#
-#     api_instance = lakefs_api.BranchesApi(api_client)
-#     branch_creation = lakefs_api.BranchCreation(name='test', source='main')
-#     try:
-#         api_response = api_instance.create_branch(
-#             repository, branch_creation)
-#     except ApiException as e:
-#         print("Exception when calling ActionsApi->get_run: %s\n" % e)
 
 catalog = LakeFSCatalog(
     "afo",
