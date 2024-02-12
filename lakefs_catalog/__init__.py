@@ -21,9 +21,9 @@ from pyiceberg.table import (
     Table,
     update_table_metadata,
 )
-from pyiceberg.table.metadata import new_table_metadata
 from pyiceberg.table.sorting import UNSORTED_SORT_ORDER
 from pyiceberg.typedef import EMPTY_DICT, Identifier, Properties
+from lakefs_catalog.metadata import new_table_metadata
 
 DEFAULT_PROPERTIES = {"write.parquet.compression-codec": "zstd"}
 
@@ -76,9 +76,12 @@ class LakeFSCatalog(Catalog):
     ) -> str:
         if new_version < 0:
             raise ValueError(
-                f"Table metadata version: `{new_version}` must be a non-negative integer"
+                f"Metadata version: {new_version} must be a non-negative integer"
             )
         return f"{location}/metadata/v{new_version}.metadata.json"
+
+    def _convert_to_lakefs_path(self, location) -> str:
+        return f"s3a://{self.repo}/{location}"
 
     def _parse_metadata_version(self, metadata_location: str) -> int:
         file_name = metadata_location.split("/")[-1]
@@ -103,6 +106,7 @@ class LakeFSCatalog(Catalog):
         location = self._resolve_table_location(
             location, database_name, table_name
         )
+        print(location)
 
         metadata_location = self._get_metadata_location(location)
         metadata = new_table_metadata(
@@ -155,10 +159,11 @@ class LakeFSCatalog(Catalog):
         base_metadata = current_table.metadata
         for requirement in table_request.requirements:
             requirement.validate(base_metadata)
-
+        print(base_metadata)
         updated_metadata = update_table_metadata(
             base_metadata, table_request.updates
         )
+        print(updated_metadata)
         if updated_metadata == base_metadata:
             # no changes, do nothing
             return CommitTableResponse(
@@ -170,15 +175,19 @@ class LakeFSCatalog(Catalog):
         new_metadata_version = (
             self._parse_metadata_version(current_table.metadata_location) + 1
         )
+        print(new_metadata_version)
         new_metadata_location = self._get_metadata_location(
             current_table.metadata.location, new_metadata_version
         )
+        new_metadata_location = self._convert_to_lakefs_path(
+            new_metadata_location)
         self._write_metadata(
             updated_metadata, current_table.io, new_metadata_location
         )
 
         self._update_version_hint(
-            current_table.location(), new_metadata_version
+            self._convert_to_lakefs_path(
+                current_table.location()), new_metadata_version
         )
 
         return CommitTableResponse(
@@ -264,7 +273,9 @@ class LakeFSCatalog(Catalog):
     def load_namespace_properties(
         self, namespace: Union[str, Identifier]
     ) -> Properties:
-        raise NotImplementedError
+        return dict(
+            location=f"s3://{self.properties['repo']}/{namespace}"
+        )
 
     def update_namespace_properties(
         self,

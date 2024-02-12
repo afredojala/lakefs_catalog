@@ -29,11 +29,15 @@ schema = Schema(
 )
 try:
     tbl = catalog.create_table(
-        identifier="ci.test",
+        identifier="ci.example",
         schema=schema,
-        location="s3://afo/ci/test",
+        location=None
     )
 except Exception:
-    tbl = catalog.load_table('ci.test')
+    tbl = catalog.load_table('ci.example')
 
 tbl.append(df)
+
+
+tbl = catalog.load_table('test.example')
+tbl.overwrite(df)
