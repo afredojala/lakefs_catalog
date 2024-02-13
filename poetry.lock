@@ -469,7 +469,7 @@ files = [
 ]
 
 [[package]]
-name = "lakefs-api"
+name = "lakefs-sdk"
 version = "1.0.0"
 description = "lakeFS API"
 optional = false
@@ -708,6 +708,46 @@ files = [
     {file = "numpy-1.26.4-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:7e50d0a0cc3189f9cb0aeb3a6a6af18c16f59f004b866cd2be1c14b36134a4a0"},
     {file = "numpy-1.26.4.tar.gz", hash = "sha256:2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010"},
 ]
+
+[[package]]
+name = "polars"
+version = "0.20.7"
+description = "Blazingly fast DataFrame library"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "polars-0.20.7-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:fd6100df0ca53614c3fa7136251e030fb70dee8833023edf7a3ac380f8e2dce5"},
+    {file = "polars-0.20.7-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:359d556fafcb533bb0caa34ddfbd5161ee23b8a43817c7a2b80189720a1f42f6"},
+    {file = "polars-0.20.7-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3cfc71d4569818548c9bf4285c497d62a3a542363c86940593a41dd731e69d7f"},
+    {file = "polars-0.20.7-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:ddff2fa419f15aa64ee23a94655fcb24b3e1b5c3eb30d124e3315deca2039a92"},
+    {file = "polars-0.20.7-cp38-abi3-win_amd64.whl", hash = "sha256:f0928576a52eca47e14a8b98f4da22025b4b2fa32549f80f4d92c5187fd3f461"},
+    {file = "polars-0.20.7.tar.gz", hash = "sha256:ec742fdf41e16ff699c043259ba94a11bbc2f7dcb978d768495db1ff2b3c5c20"},
+]
+
+[package.dependencies]
+pyiceberg = {version = ">=0.5.0", optional = true, markers = "extra == \"pyiceberg\""}
+
+[package.extras]
+adbc = ["adbc_driver_sqlite"]
+all = ["polars[adbc,cloudpickle,connectorx,deltalake,fsspec,gevent,numpy,pandas,plot,pyarrow,pydantic,pyiceberg,sqlalchemy,timezone,xlsx2csv,xlsxwriter]"]
+cloudpickle = ["cloudpickle"]
+connectorx = ["connectorx (>=0.3.2)"]
+deltalake = ["deltalake (>=0.14.0)"]
+fsspec = ["fsspec"]
+gevent = ["gevent"]
+matplotlib = ["matplotlib"]
+numpy = ["numpy (>=1.16.0)"]
+openpyxl = ["openpyxl (>=3.0.0)"]
+pandas = ["pandas", "pyarrow (>=7.0.0)"]
+plot = ["hvplot (>=0.9.1)"]
+pyarrow = ["pyarrow (>=7.0.0)"]
+pydantic = ["pydantic"]
+pyiceberg = ["pyiceberg (>=0.5.0)"]
+pyxlsb = ["pyxlsb (>=1.0)"]
+sqlalchemy = ["pandas", "sqlalchemy"]
+timezone = ["backports.zoneinfo", "tzdata"]
+xlsx2csv = ["xlsx2csv (>=0.8.0)"]
+xlsxwriter = ["xlsxwriter"]
 
 [[package]]
 name = "pyarrow"
@@ -1287,4 +1327,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "f2accf3cfca12f89f3d63bb5bd1d827d7537fde0f8e973b959aa00182d4c148f"
+content-hash = "025f1c804e17f1ba11fef20637762a205b713ccb80528f9b8199d967d6390187"

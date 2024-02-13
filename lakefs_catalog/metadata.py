@@ -53,8 +53,6 @@ def new_table_metadata(
             TableProperties.DEFAULT_FORMAT_VERSION,
         )
     )
-    location = "/".join(location.split("/")[-2:])
-    print(location)
     if format_version == 1:
         return TableMetadataV1(
             location=location,

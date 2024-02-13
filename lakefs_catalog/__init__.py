@@ -4,9 +4,11 @@ from typing import (
     List,
     Optional,
     Set,
+    Tuple,
     Union,
 )
-import lakefs_api
+from lakefs_sdk.configuration import Configuration
+from lakefs_sdk.api_client import ApiClient
 import s3fs
 
 from pyiceberg.catalog import Catalog, PropertiesUpdateSummary
@@ -18,12 +20,12 @@ from pyiceberg.table import (
     CommitTableRequest,
     CommitTableResponse,
     SortOrder,
-    Table,
     update_table_metadata,
 )
 from pyiceberg.table.sorting import UNSORTED_SORT_ORDER
 from pyiceberg.typedef import EMPTY_DICT, Identifier, Properties
 from lakefs_catalog.metadata import new_table_metadata
+from lakefs_catalog.lakefs_table import LakeFSTable
 
 DEFAULT_PROPERTIES = {"write.parquet.compression-codec": "zstd"}
 
@@ -32,29 +34,30 @@ if TYPE_CHECKING:
 
 
 class LakeFSCatalog(Catalog):
-    configuration: lakefs_api.Configuration
+    repository: str
 
     def __init__(self, name: str, **properties):
-        self.name = (name,)
+        self.name = name
+        keys = properties.keys()
+        if (
+            "s3.endpoint" not in keys
+            or "s3.access-key-id" not in keys
+            or "s3.secret-access-key" not in keys
+        ):
+            raise AttributeError("Fill Properties correct")
         self.properties = properties
-        self.configuration = lakefs_api.Configuration(
-            username=properties["s3.access-key-id"],
-            password=properties["s3.secret-access-key"],
-            host=properties["s3.endpoint"],
-        )
-        self.repo = properties["repo"]
-        self.client = lakefs_api.ApiClient(self.configuration)
+        self.repository = properties["repository"]
 
-    def _list_metadata_files(self, location: str) -> str:
+    def _list_metadata_files(self, location: str) -> List[str]:
         pattern = f"{location}/metadata/*.json"
         s3 = self._get_filesystem()
         return s3.glob(pattern)
 
     def _get_filesystem(self) -> s3fs.S3FileSystem:
         return s3fs.S3FileSystem(
-            endpoint_url=self.configuration.host,
-            key=self.configuration.username,
-            secret=self.configuration.password,
+            endpoint_url=self.properties["s3.endpoint"],
+            key=self.properties["s3.access-key-id"],
+            secret=self.properties["s3.secret-access-key"],
         )
 
     def _get_latest_metadata(self, location):
@@ -71,19 +74,29 @@ class LakeFSCatalog(Catalog):
         with s3.open(path, "w") as f:
             f.write(str(version))
 
-    def _get_metadata_location(
-        self, location: str, new_version: int = 0
-    ) -> str:
+    @staticmethod
+    def _get_metadata_location(location: str, new_version: int = 0) -> str:
         if new_version < 0:
             raise ValueError(
                 f"Metadata version: {new_version} must be a non-negative integer"
             )
         return f"{location}/metadata/v{new_version}.metadata.json"
 
-    def _convert_to_lakefs_path(self, location) -> str:
-        return f"s3a://{self.repo}/{location}"
+    def _identifier_to_lakefs_path(
+        self, identifier: Union[str, Identifier]
+    ) -> Tuple[str, str]:
+        if isinstance(identifier, str):
+            parts = identifier.split(".")
+        elif isinstance(identifier, Tuple):
+            parts = identifier
+        else:
+            raise ValueError("identifier needs to be correct")
+        branch = parts[0]
 
-    def _parse_metadata_version(self, metadata_location: str) -> int:
+        return f"s3a://{self.repository}/{branch}", "/".join(parts[1:])
+
+    @staticmethod
+    def _parse_metadata_version(metadata_location: str) -> int:
         file_name = metadata_location.split("/")[-1]
         version_str = file_name.split(".")[0]
         version = re.sub(r"\D", "", version_str)
@@ -93,22 +106,16 @@ class LakeFSCatalog(Catalog):
         self,
         identifier: Union[str, Identifier],
         schema: Union[Schema, "pa.Schema"],
-        location: Optional[str],
+        location: Optional[str] = None,
         partition_spec: PartitionSpec = UNPARTITIONED_PARTITION_SPEC,
         sort_order: SortOrder = UNSORTED_SORT_ORDER,
         properties: Properties = EMPTY_DICT,
     ):
         properties = {**DEFAULT_PROPERTIES, **properties}
-        database_name, table_name = self.identifier_to_database_and_table(
-            identifier
-        )
+        lakefs_path, location = self._identifier_to_lakefs_path(identifier)
 
-        location = self._resolve_table_location(
-            location, database_name, table_name
-        )
-        print(location)
-
-        metadata_location = self._get_metadata_location(location)
+        location_path = f"{lakefs_path}/{location}"
+        metadata_location = self._get_metadata_location(location_path)
         metadata = new_table_metadata(
             location=location,
             schema=schema,
@@ -118,19 +125,19 @@ class LakeFSCatalog(Catalog):
         )
 
         io = self._load_file_io(
-            {**self.properties, **properties}, location=location
+            {**self.properties, **properties}, location=metadata_location
         )
         try:
             self._write_metadata(metadata, io, metadata_location)
         except FileExistsError:
-            raise TableAlreadyExistsError
+            raise TableAlreadyExistsError from None
 
         self._update_version_hint(
-            location, self._parse_metadata_version(metadata_location)
+            location_path, self._parse_metadata_version(metadata_location)
         )
 
         identifier_tuple = self.identifier_to_tuple_without_catalog(identifier)
-        return Table(
+        return LakeFSTable(
             identifier=identifier_tuple,
             metadata=metadata,
             metadata_location=metadata_location,
@@ -140,7 +147,7 @@ class LakeFSCatalog(Catalog):
 
     def register_table(
         self, identifier: Union[str, Identifier], metadata_location: str
-    ) -> Table:
+    ) -> LakeFSTable:
         raise NotImplementedError
 
     def _commit_table(
@@ -152,49 +159,42 @@ class LakeFSCatalog(Catalog):
                 + [table_request.identifier.name]
             )
         )
-        current_table = self.load_table(identifier_tuple)
-        database_name, table_name = self.identifier_to_database_and_table(
-            identifier_tuple, NoSuchTableError
+        lakefs_path, location = self._identifier_to_lakefs_path(
+            identifier_tuple
         )
+        lakefs_location = f"{lakefs_path}/{location}"
+        current_table = self.load_table(identifier_tuple)
         base_metadata = current_table.metadata
         for requirement in table_request.requirements:
             requirement.validate(base_metadata)
-        print(base_metadata)
         updated_metadata = update_table_metadata(
             base_metadata, table_request.updates
         )
-        print(updated_metadata)
         if updated_metadata == base_metadata:
             # no changes, do nothing
             return CommitTableResponse(
                 metadata=base_metadata,
-                metadata_location=current_table.metadata_location,
+                metadata_location=metadata_location,
             )
 
         # write new metadata
         new_metadata_version = (
             self._parse_metadata_version(current_table.metadata_location) + 1
         )
-        print(new_metadata_version)
         new_metadata_location = self._get_metadata_location(
-            current_table.metadata.location, new_metadata_version
+            lakefs_location, new_metadata_version
         )
-        new_metadata_location = self._convert_to_lakefs_path(
-            new_metadata_location)
         self._write_metadata(
             updated_metadata, current_table.io, new_metadata_location
         )
 
-        self._update_version_hint(
-            self._convert_to_lakefs_path(
-                current_table.location()), new_metadata_version
-        )
+        self._update_version_hint(lakefs_location, new_metadata_version)
 
         return CommitTableResponse(
             metadata=updated_metadata, metadata_location=new_metadata_location
         )
 
-    def load_table(self, identifier: Union[str, Identifier]) -> Table:
+    def load_table(self, identifier: Union[str, Identifier]) -> LakeFSTable:
         """Load the table's metadata and returns the table instance.
 
         You can also use this method to check for table existence using
@@ -212,21 +212,23 @@ class LakeFSCatalog(Catalog):
             NoSuchTableError: If a table with the name does not exist,
             or the identifier is invalid.
         """
-        identifier_tuple = self.identifier_to_tuple_without_catalog(identifier)
-        database_name, table_name = self.identifier_to_database_and_table(
-            identifier_tuple, NoSuchTableError
-        )
-        location = self._get_location(identifier)
+        lakefs_path, location = self._identifier_to_lakefs_path(identifier)
+        location_path = f"{lakefs_path}/{location}"
 
-        io = self._load_file_io({**self.properties}, location=location)
+        io = self._load_file_io({**self.properties}, location=location_path)
 
-        metadata_location = self._get_latest_metadata(location)
+        try:
+            metadata_location = self._get_latest_metadata(location_path)
+        except FileNotFoundError:
+            raise NoSuchTableError(
+                f"Table: {identifier} does not exists"
+            ) from None
+
         metadata_file = io.new_input(metadata_location)
-        print(metadata_file.location)
 
         metadata = FromInputFile.table_metadata(metadata_file)
-        return Table(
-            identifier=identifier_tuple,
+        return LakeFSTable(
+            identifier=self.identifier_to_tuple(identifier),
             metadata=metadata,
             metadata_location=metadata_location,
             io=io,
@@ -235,7 +237,7 @@ class LakeFSCatalog(Catalog):
 
     def _get_location(self, identifier: Union[str, Identifier]) -> str:
         identifier_tuple = self.identifier_to_tuple_without_catalog(identifier)
-        return f"s3a://{self.repo}/{'/'.join(identifier_tuple)}"
+        return f"s3a://{self.repository}/{'/'.join(identifier_tuple)}"
 
     def drop_table(self, identifier: Union[str, Identifier]) -> None:
         raise NotImplementedError
@@ -247,7 +249,7 @@ class LakeFSCatalog(Catalog):
         self,
         from_identifier: Union[str, Identifier],
         to_identifier: Union[str, Identifier],
-    ) -> Table:
+    ) -> LakeFSTable:
         raise NotImplementedError
 
     def create_namespace(
@@ -273,9 +275,7 @@ class LakeFSCatalog(Catalog):
     def load_namespace_properties(
         self, namespace: Union[str, Identifier]
     ) -> Properties:
-        return dict(
-            location=f"s3://{self.properties['repo']}/{namespace}"
-        )
+        return dict(location=f"s3://{self.properties['repo']}/{namespace}")
 
     def update_namespace_properties(
         self,

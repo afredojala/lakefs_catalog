@@ -11,7 +11,7 @@ generate_lakefs_api:
     -g python \
     -o /local/out/python \
     -t /local/templates \
-    --package-name lakefs_api \
+    --package-name lakefs_sdk \
     -c /local/python-codegen-config.yaml
 
 start-lakefs:

@@ -9,8 +9,9 @@ readme = "README.md"
 python = "^3.11"
 pyiceberg = {git = "https://github.com/apache/iceberg-python"}
 pyarrow = "^15.0.0"
-lakefs-api = {path = "api_spec/out/python"}
 s3fs = ">=2023.1.0,<2024.1.0"
+lakefs-sdk = {path = "api_spec/out/python"}
+polars = {extras = ["pyiceberg"], version = "^0.20.7"}
 
 
 [tool.poetry.group.dev.dependencies]
