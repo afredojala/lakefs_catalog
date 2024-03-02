@@ -10,6 +10,11 @@ from pyiceberg.partitioning import (
     assign_fresh_partition_spec_ids,
 )
 from pyiceberg.schema import Schema, assign_fresh_schema_ids
+from pyiceberg.table.metadata import (
+    TableMetadata,
+    TableMetadataV1,
+    TableMetadataV2,
+)
 from pyiceberg.table.sorting import (
     SortOrder,
     assign_fresh_sort_order_ids,
@@ -17,11 +22,6 @@ from pyiceberg.table.sorting import (
 from pyiceberg.typedef import (
     EMPTY_DICT,
     Properties,
-)
-from pyiceberg.table.metadata import (
-    TableMetadataV1,
-    TableMetadataV2,
-    TableMetadata,
 )
 
 

@@ -1,13 +1,14 @@
 from typing import Dict, Optional
-from lakefs_sdk.configuration import Configuration
+
 from lakefs_sdk.client import LakeFSClient
+from lakefs_sdk.configuration import Configuration
 from lakefs_sdk.models.commit import Commit
 from lakefs_sdk.models.commit_creation import CommitCreation
-from pyiceberg.typedef import Identifier
-from pyiceberg.table import Table
-from pyiceberg.catalog import Catalog, Properties
-from pyiceberg.table.metadata import TableMetadata
+from pyiceberg.catalog import Catalog
 from pyiceberg.io import FileIO
+from pyiceberg.table import Table
+from pyiceberg.table.metadata import TableMetadata
+from pyiceberg.typedef import Identifier, Properties
 
 
 class LakeFSTable(Table):

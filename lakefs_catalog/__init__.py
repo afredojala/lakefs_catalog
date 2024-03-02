@@ -7,10 +7,8 @@ from typing import (
     Tuple,
     Union,
 )
-from lakefs_sdk.configuration import Configuration
-from lakefs_sdk.api_client import ApiClient
-import s3fs
 
+import s3fs
 from pyiceberg.catalog import Catalog, PropertiesUpdateSummary
 from pyiceberg.exceptions import NoSuchTableError, TableAlreadyExistsError
 from pyiceberg.partitioning import UNPARTITIONED_PARTITION_SPEC, PartitionSpec
@@ -24,8 +22,9 @@ from pyiceberg.table import (
 )
 from pyiceberg.table.sorting import UNSORTED_SORT_ORDER
 from pyiceberg.typedef import EMPTY_DICT, Identifier, Properties
-from lakefs_catalog.metadata import new_table_metadata
+
 from lakefs_catalog.lakefs_table import LakeFSTable
+from lakefs_catalog.metadata import new_table_metadata
 
 DEFAULT_PROPERTIES = {"write.parquet.compression-codec": "zstd"}
 
@@ -51,7 +50,8 @@ class LakeFSCatalog(Catalog):
     def _list_metadata_files(self, location: str) -> List[str]:
         pattern = f"{location}/metadata/*.json"
         s3 = self._get_filesystem()
-        return s3.glob(pattern)
+        files = [str(f) for f in s3.glob(pattern)]
+        return files
 
     def _get_filesystem(self) -> s3fs.S3FileSystem:
         return s3fs.S3FileSystem(

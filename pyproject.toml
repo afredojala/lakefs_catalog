@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pyiceberg = {git = "https://github.com/apache/iceberg-python"}
+pyiceberg = "^0.6.0"
 pyarrow = "^15.0.0"
 s3fs = ">=2023.1.0,<2024.1.0"
 lakefs-sdk = {path = "api_spec/out/python"}

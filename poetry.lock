@@ -927,15 +927,62 @@ name = "pyiceberg"
 version = "0.6.0"
 description = "Apache Iceberg is an open table format for huge analytic datasets"
 optional = false
-python-versions = "^3.8"
-files = []
-develop = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "pyiceberg-0.6.0-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:1d2b231f7ec0821cb2eeb0f4ef99586176f5d90a4fad681ec78b008338961694"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-macosx_12_0_x86_64.whl", hash = "sha256:18248e3f6c0d9dc9c6a3bb485e8a8929de7716e8de37e219b13d053673b179ef"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-macosx_13_0_x86_64.whl", hash = "sha256:dc24a65de4b3639fa3350e0d4ac611825c1c4c6aca9f554709667678e4e7f884"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:2e97e653bf7c025bf50620c1b207b960eb9abbadbfcf53b28e5e6b6185c5abc1"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dbeb5d640cb9c00a56a448ad1555cd98b4efc6fe2b5316029e2943993461f871"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:3b197bf35ba50823a7177ae076782debd7bf7f13fec5128f0dd533f54c6c6957"},
+    {file = "pyiceberg-0.6.0-cp310-cp310-win_amd64.whl", hash = "sha256:2e1c627ba39f6e10e523a87bea703d7732d3d12332b11b7664dac37d59b616c8"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-macosx_11_0_x86_64.whl", hash = "sha256:489873528ffc1a58c833ad6b57e80b7bc278eda48aecac32ed35226cb81af5f9"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-macosx_12_0_x86_64.whl", hash = "sha256:c0611a9f9f21fa11646fc48b3e8ea4e5855bcb987d23c61346de923d3141939c"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-macosx_13_0_x86_64.whl", hash = "sha256:df0a5f7c5c9e697e4d07ac9d8e5d39794e363dca1e9bce0055f15309225b98d9"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:e25b1d0f5976d9aba455d51bb30af693dea8d7ba87b5a443a96768336445002b"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8e6b008a20fb43987646090fbe3f0e82b5bcdfe899cf7875163833fcb71dfd0"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:ab8da809b67f042eb096de9e0a0ac2f23102d1198d5b68cb04c3fff3dba76631"},
+    {file = "pyiceberg-0.6.0-cp311-cp311-win_amd64.whl", hash = "sha256:7496264ce06a0849ae25adf3d01b7146794b21d6672e61de09cc4014c7fde722"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-macosx_11_0_x86_64.whl", hash = "sha256:2a2e120e0c03b7ea164b175947c2e009605de21ad69c42a87f5e6c2823180351"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-macosx_12_0_x86_64.whl", hash = "sha256:9d2f6dbb031989bdd2e8104fed2d1968758d2e04bb5e54994585ac255496e991"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-macosx_13_0_x86_64.whl", hash = "sha256:f832e5639d47af883a1dfe3664621c25fdc791711fe85b316f7ea5a331fdd64f"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-macosx_14_0_x86_64.whl", hash = "sha256:1fe8b7da23872e248da9423faeb8f89e445e95b254259e92d4a3deb5ab6a1cb4"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:346db652aa5be0d54f389514d12448598d68601a4fbd2394487ec10fea21e236"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:8210154ee101d12a7d1bb1d01af262b399037d7f17ee7f7d5e6e43578057d59d"},
+    {file = "pyiceberg-0.6.0-cp38-cp38-win_amd64.whl", hash = "sha256:cda3aaa32aed051339cd5c8571c9ff068b5fa87c5ab3147de6a40561c6027f68"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:5e05702e54549bd2b2170f539f7ea4e35af36065fc758ed0c195148f4cabf89a"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-macosx_12_0_x86_64.whl", hash = "sha256:cabde41d16b0a34d35eec08903949198b94fb8c43a056220a458600aee8a1767"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-macosx_13_0_x86_64.whl", hash = "sha256:95a9be68282c635787d686f1931b1543572abe0d63d6bfa71e96a026c6c51010"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:2ec438be98ba83ff1d79cea3d3ffb3526ddfdfdd30723ea84eff613c770003dc"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e224e3075fabda03618821978f0918f5c573230cc1b67dc048b65c38c689a90"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:b8697b107863036fe5b40544f2fa08f4c37ec089fc9ba678c6d0d8a83593934b"},
+    {file = "pyiceberg-0.6.0-cp39-cp39-win_amd64.whl", hash = "sha256:cb982a91fce0c7b377e84da3094973e523b08c09775e99554fd0754a51ecdc1b"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-macosx_11_0_x86_64.whl", hash = "sha256:63dc3e7f765b0500c7c0787d96882d1bc5a70f822f9930f7f72f2bbd12720824"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-macosx_12_0_x86_64.whl", hash = "sha256:c043b153143a86226b864be87c42555f9ce60275f14c382d5ebfff4373bf2734"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-macosx_13_0_x86_64.whl", hash = "sha256:e472d9730fe4b062e396adb64042f1d39be415b04988939f081d08477b80ab64"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-macosx_14_0_arm64.whl", hash = "sha256:85f9b0fe998a04d13a905c73d7d3c9e7fec28aefe6cc81cc3a6005d315f081c2"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f0d249f03cb348cfadb56ee7001421b52307c8a79c590807ecc67e1261d03560"},
+    {file = "pyiceberg-0.6.0-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:dd1331a5eb15b9de849ff61ab023e3a1ec235a3d231c8810fcb44167a46b6367"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-macosx_11_0_x86_64.whl", hash = "sha256:40425523afba683b647b3e60df8158e9542209289d0ff956284b06f26db3863a"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-macosx_12_0_x86_64.whl", hash = "sha256:560b078df44bf7b3db1d27560f567b492603397b736dba7b5548f97cf5561d46"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-macosx_13_0_x86_64.whl", hash = "sha256:80d02d3b8bc91200e8638170ae891a16297f0a97b9ebafc038ffece32dbc510e"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-macosx_14_0_arm64.whl", hash = "sha256:8e8d87e40ed286fbbc8986c9ec5fe0e5f43cba4d830dafd281db19c019c62ebf"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eae49340b9a4492e1bcceb14b07a62fe14c77c1167a9320638cfa717710c63c1"},
+    {file = "pyiceberg-0.6.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:803fb432c6c7505c84b8bd0d337447ff482afedbcc7e34dab5577ef668886994"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-macosx_11_0_x86_64.whl", hash = "sha256:ae7a51a0ce623ebef31dd718ae852d4bd2e5dd34cbdfa95264ea0887ab330919"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-macosx_12_0_x86_64.whl", hash = "sha256:513f97b08bb453f03219bad0eb2b3367fa39faf08a0ac9fa0ec4c8fc8b347418"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-macosx_13_0_x86_64.whl", hash = "sha256:f7edc3460fd49caca7e3a2c0950e8e2956055e402d3761656fdeaeed73c63ff8"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-macosx_14_0_arm64.whl", hash = "sha256:ccf2a30e457722f544306f32bfa0a8252fc7000096ad21e5e37e72ba3ff49502"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d427c56904ca3a74f60dc75655a833ade02942a625c3505d6af91c54387a1ea5"},
+    {file = "pyiceberg-0.6.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:c4ea00e35928518b8a1fb5738221e4c269d8842216e18d0ebf5482cd0ba50ae3"},
+    {file = "pyiceberg-0.6.0.tar.gz", hash = "sha256:0d965c202a9f49d0daa911c3fe061c55c90fa469bb382ce6440a7799ed35b003"},
+]
 
 [package.dependencies]
 click = ">=7.1.1,<9.0.0"
 fsspec = ">=2023.1.0,<2024.1.0"
 mmhash3 = ">=3.0.0,<4.0.0"
-pydantic = ">=2.0,<3.0,!=2.4.0,!=2.4.1"
+pydantic = ">=2.0,<2.4.0 || >2.4.0,<2.4.1 || >2.4.1,<3.0"
 pyparsing = ">=3.1.0,<4.0.0"
 requests = ">=2.20.0,<3.0.0"
 rich = ">=10.11.0,<14.0.0"
@@ -958,12 +1005,6 @@ snappy = ["python-snappy (>=0.6.0,<1.0.0)"]
 sql-postgres = ["psycopg2-binary (>=2.9.6)", "sqlalchemy (>=2.0.18,<3.0.0)"]
 sql-sqlite = ["sqlalchemy (>=2.0.18,<3.0.0)"]
 zstandard = ["zstandard (>=0.13.0,<1.0.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/apache/iceberg-python"
-reference = "HEAD"
-resolved_reference = "e9e265a1878a55a4385580bf800382fd75c912c9"
 
 [[package]]
 name = "pyparsing"
@@ -1327,4 +1368,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "025f1c804e17f1ba11fef20637762a205b713ccb80528f9b8199d967d6390187"
+content-hash = "b593b97647b596b2f41cfb3c44ab967ee2c087451bf961983de0ee44e90c0b60"
